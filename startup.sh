@@ -1,15 +1,22 @@
 #!/bin/bash
 set -e
 
-echo "Configuring Apache2 with environment variables from Docker..."
+echo "Configuring Apache2 environment variables..."
 
 # Set ServerName of created container
-if [ -f /etc/apache2/apache2.conf ]; then
-	echo "ServerName $(cat /etc/hostname)" >> /etc/apache2/apache2.conf
+if [ -z APACHE_SERVERNAME ]; then
+	export APACHE_SERVERNAME=$(cat /etc/hostname)
 fi
 
-# Set APACHE_FCGI_HOST_PORT to PHP FPM in the CLI container
-export APACHE_FCGI_HOST_PORT=${CLI_1_PORT_9000_TCP_ADDR}:9000
+# Set APACHE_FCGI_HOST_PORT to PHP FPM daemon in the CLI container
+if [ -z $APACHE_FCGI_HOST_PORT ]; then
+	export APACHE_FCGI_HOST_PORT=${CLI_1_PORT_9000_TCP_ADDR}:9000
+fi
+
+# docroot path override
+if [ ! -z $DOCROOT ]; then
+	export APACHE_DOCUMENTROOT=$DOCROOT
+fi
 
 # Execute passed CMD arguments
 exec "$@"
