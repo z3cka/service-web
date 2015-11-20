@@ -1,19 +1,14 @@
-FROM debian:wheezy
+FROM blinkreaction/drupal-base:wheezy
 
 MAINTAINER Leonid Makarov <leonid.makarov@blinkreaction.com>
-
-# Prevent services autoload (http://jpetazzo.github.io/2013/10/06/policy-rc-d-do-not-start-services-automatically/)
-RUN echo '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d
-
-# Enabling additional repos (needed for libapache2-mod-fastcgi)
-RUN sed -i 's/main/main contrib non-free/' /etc/apt/sources.list
 
 # Basic packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes --no-install-recommends install \
-    ca-certificates apache2-mpm-worker libapache2-mod-fastcgi && \
+    apache2-mpm-worker \
+    libapache2-mod-fastcgi \
     # Cleanup
-    DEBIAN_FRONTEND=noninteractive apt-get clean && \
+    && DEBIAN_FRONTEND=noninteractive apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Enable Apache modules and sites
