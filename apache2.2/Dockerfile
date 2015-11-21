@@ -2,41 +2,41 @@ FROM blinkreaction/drupal-base:wheezy
 
 MAINTAINER Leonid Makarov <leonid.makarov@blinkreaction.com>
 
-# Basic packages
+# Install packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes --no-install-recommends install \
     apache2-mpm-worker \
     libapache2-mod-fastcgi \
+    ssl-cert \
     # Cleanup
     && DEBIAN_FRONTEND=noninteractive apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Enable Apache modules and sites
-RUN a2enmod actions alias fastcgi rewrite ssl && \
-    a2ensite default-ssl
-
 # Configuration
-COPY config/apache2/sites-available/default /etc/apache2/sites-available/default
-COPY config/apache2/sites-available/default-ssl /etc/apache2/sites-available/default-ssl
+COPY config/apache2/sites-available/drupal.conf /etc/apache2/sites-available/drupal
+COPY config/apache2/sites-available/drupal-ssl.conf /etc/apache2/sites-available/drupal-ssl
 COPY config/apache2/sites-available/host.conf /etc/apache2/sites-available/includes/host.conf
 COPY config/apache2/mods-enabled/fastcgi.conf /etc/apache2/mods-enabled/fastcgi.conf
 
-# Send logs to stdout for Docker will pick these up
-RUN sed -i 's/ErrorLog .*/ErrorLog \/dev\/stdout/' /etc/apache2/apache2.conf && \
-    sed -i 's/LogLevel .*/LogLevel info/' /etc/apache2/apache2.conf
-
-# Generate SSL certificate and key
-RUN openssl req -batch -nodes -newkey rsa:2048 -keyout /etc/ssl/private/server.key -out /tmp/server.csr && \
-    openssl x509 -req -days 365 -in /tmp/server.csr -signkey /etc/ssl/private/server.key -out /etc/ssl/certs/server.crt;rm /tmp/server.csr
-
-# Set file and folder permissions
-RUN usermod -u 1000 www-data && \
-    mkdir -p /var/run/apache2/fastcgi/dynamic && \
-    chown -R www-data:www-data /var/run/apache2 && \
-    chown -R www-data:www-data /var/www
-
 # Startup script
 COPY startup.sh /opt/startup.sh
+
+RUN \
+    # Configure folders, set permissions
+    usermod -u 1000 www-data && \
+    mkdir -p /var/run/apache2 && \
+    mkdir -p /var/lock/apache2 && \
+    chown -R www-data:www-data /var/run/apache2 && \
+    chown -R www-data:www-data /var/lock/apache2 && \
+    chown -R www-data:www-data /var/www && \
+    ln -s /var/www/html /var/www/docroot && \
+    # Enable Apache modules and sites
+    a2enmod actions alias fastcgi rewrite ssl && \
+    a2dissite 000-default default-ssl && \
+    a2ensite drupal drupal-ssl && \
+    # Send logs to stdout for Docker will pick these up
+    sed -i 's/ErrorLog .*/ErrorLog \/dev\/stdout/' /etc/apache2/apache2.conf && \
+    sed -i 's/LogLevel .*/LogLevel info/' /etc/apache2/apache2.conf
 
 # Configure Apache environment variables
 # Need these since we are lauching apache directly with apache2 and not with apache2ctl
