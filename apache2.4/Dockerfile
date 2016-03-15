@@ -1,4 +1,4 @@
-FROM blinkreaction/drupal-base:wheezy
+FROM blinkreaction/drupal-base:jessie
 
 MAINTAINER Leonid Makarov <leonid.makarov@blinkreaction.com>
 
@@ -6,17 +6,15 @@ MAINTAINER Leonid Makarov <leonid.makarov@blinkreaction.com>
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes --no-install-recommends install \
     apache2-mpm-worker \
-    libapache2-mod-fastcgi \
     ssl-cert \
     # Cleanup
     && DEBIAN_FRONTEND=noninteractive apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Configuration
-COPY config/apache2/sites-available/drupal.conf /etc/apache2/sites-available/drupal
-COPY config/apache2/sites-available/drupal-ssl.conf /etc/apache2/sites-available/drupal-ssl
+COPY config/apache2/sites-available/drupal.conf /etc/apache2/sites-available/drupal.conf
+COPY config/apache2/sites-available/drupal-ssl.conf /etc/apache2/sites-available/drupal-ssl.conf
 COPY config/apache2/sites-available/host.conf /etc/apache2/sites-available/includes/host.conf
-COPY config/apache2/mods-enabled/fastcgi.conf /etc/apache2/mods-enabled/fastcgi.conf
 
 # Startup script
 COPY startup.sh /opt/startup.sh
@@ -31,7 +29,7 @@ RUN \
     chown -R www-data:www-data /var/www && \
     ln -s /var/www/html /var/www/docroot && \
     # Enable Apache modules and sites
-    a2enmod actions alias fastcgi rewrite ssl && \
+    a2enmod actions alias proxy_fcgi rewrite ssl && \
     a2dissite 000-default default-ssl && \
     a2ensite drupal drupal-ssl && \
     # Send logs to stdout for Docker will pick these up
