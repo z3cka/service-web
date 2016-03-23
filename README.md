@@ -14,6 +14,23 @@ The fastcgi server:port can be set via APACHE_FCGI_HOST_PORT environment variabl
 
 - SSL enabled
 - BigPipe support (on 2.2 only)
+- HTTP Basic Authentication
+
+
+## HTTP Basic Authentication
+
+Use `APACHE_BASIC_AUTH_USER` and `APACHE_BASIC_AUTH_PASS` environment variables 
+to set username and password.
+
+Example (`docker-compose.yml`):
+
+```
+  ...
+  environment:
+    - APACHE_BASIC_AUTH_USER=user
+    - APACHE_BASIC_AUTH_PASS=password
+  ...
+```
 
 
 ## License
