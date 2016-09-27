@@ -1,4 +1,4 @@
-FROM blinkreaction/drupal-base:wheezy
+FROM docksal/base:wheezy
 
 MAINTAINER Leonid Makarov <leonid.makarov@blinkreaction.com>
 
