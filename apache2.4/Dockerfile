@@ -1,15 +1,35 @@
-FROM docksal/base:jessie
+FROM debian:jessie
 
-MAINTAINER Leonid Makarov <leonid.makarov@blinkreaction.com>
+MAINTAINER Team Docksal, https://docksal.io
+
+# Prevent services autoload (http://jpetazzo.github.io/2013/10/06/policy-rc-d-do-not-start-services-automatically/)
+RUN echo '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d
+
+# Enabling additional repos
+RUN sed -i 's/main/main contrib non-free/' /etc/apt/sources.list
 
 # Install packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes --no-install-recommends install \
+    curl \
+    wget \
+    ca-certificates \
+    locales \
+    supervisor \
+    procps \
+    dnsutils \
+    nano \
     apache2-mpm-worker \
     ssl-cert \
     # Cleanup
     && DEBIAN_FRONTEND=noninteractive apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Set timezone and locale
+RUN dpkg-reconfigure locales && \
+    locale-gen C.UTF-8 && \
+    /usr/sbin/update-locale LANG=C.UTF-8
+ENV LC_ALL C.UTF-8
 
 # Configuration
 COPY config/apache2/sites-available/drupal.conf /etc/apache2/sites-available/drupal.conf
@@ -46,6 +66,9 @@ ENV APACHE_RUN_USER=www-data \
     APACHE_LOCK_DIR=/var/lock/apache2 \
     APACHE_SERVERADMIN=webmaster@localhost \
     APACHE_DOCUMENTROOT=/var/www/docroot
+
+# Set TERM so text editors/etc. can be used
+ENV TERM xterm
 
 WORKDIR /var/www
 
