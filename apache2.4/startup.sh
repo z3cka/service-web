@@ -11,14 +11,10 @@ export APACHE_SERVERNAME="${APACHE_SERVERNAME:-$(cat /etc/hostname)}"
 export APACHE_FCGI_HOST_PORT="${APACHE_FCGI_HOST_PORT:-cli:9000}"
 
 # Basic HTTP Authentication
-export APACHE_AUTH_OFF=''
 if [[ $APACHE_BASIC_AUTH_USER != '' && $APACHE_BASIC_AUTH_PASS != '' ]]; then
 	echo "Enabling Basic HTTP Authentication [${APACHE_BASIC_AUTH_USER}:${APACHE_BASIC_AUTH_PASS}]"
 	htpasswd -cb /opt/htpasswd $APACHE_BASIC_AUTH_USER $APACHE_BASIC_AUTH_PASS
+	exec "$@" "-DBasicAuth"
 else
-	# A simple way to disable authentication
-	export APACHE_AUTH_OFF='Satisfy Any'
+	exec "$@"
 fi
-
-# Execute passed CMD arguments
-exec "$@"
