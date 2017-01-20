@@ -24,7 +24,7 @@ Use `APACHE_BASIC_AUTH_USER` and `APACHE_BASIC_AUTH_PASS` environment variables 
 
 Example with Docker Compose
 
-```
+```yaml
   ...
   environment:
     - APACHE_BASIC_AUTH_USER=user
