@@ -49,7 +49,7 @@ RUN \
     chown -R www-data:www-data /var/www && \
     ln -s /var/www/html /var/www/docroot && \
     # Enable Apache modules and sites
-    a2enmod actions alias fastcgi rewrite ssl && \
+    a2enmod actions alias fastcgi proxy rewrite ssl && \
     a2dissite 000-default default-ssl && \
     a2ensite drupal drupal-ssl && \
     # Send logs to stdout for Docker will pick these up
