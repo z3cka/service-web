@@ -31,10 +31,8 @@ RUN dpkg-reconfigure locales && \
 ENV LC_ALL C.UTF-8
 
 # Configuration
-COPY config/apache2/sites-available/drupal.conf /etc/apache2/sites-available/drupal
-COPY config/apache2/sites-available/drupal-ssl.conf /etc/apache2/sites-available/drupal-ssl
-COPY config/apache2/sites-available/host.conf /etc/apache2/sites-available/includes/host.conf
-COPY config/apache2/mods-enabled/fastcgi.conf /etc/apache2/mods-enabled/fastcgi.conf
+COPY config/apache2/sites-available /etc/apache2/sites-available
+COPY config/apache2/mods-available /etc/apache2/mods-available
 
 # Startup script
 COPY startup.sh /opt/startup.sh
@@ -51,7 +49,7 @@ RUN \
     # Enable Apache modules and sites
     a2enmod actions alias fastcgi proxy rewrite ssl && \
     a2dissite 000-default default-ssl && \
-    a2ensite drupal drupal-ssl && \
+    a2ensite docksal docksal-ssl && \
     # Send logs to stdout for Docker will pick these up
     sed -i 's/ErrorLog .*/ErrorLog \/dev\/stdout/' /etc/apache2/apache2.conf && \
     sed -i 's/LogLevel .*/LogLevel info/' /etc/apache2/apache2.conf
