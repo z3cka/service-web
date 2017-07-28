@@ -1,22 +1,22 @@
 # Apache Docker images for Docksal
 
-- apache2.2
-- apache2.4
-
 This image(s) is part of the [Docksal](http://docksal.io) image library.
+
+## Versions
+
+- apache2.2 (based on http:2.2-alpine)
+- apache2.4 (based on http:2.4-alpine)
 
 ## Features
 
-- SSL enabled
-- BigPipe support (on 2.2 only)
+- SSL enabled (self-signed cer)
 - HTTP Basic Authentication
+- PHP handling via FastCGI (`mod_proxy_fcgi`) (both 2.2 and 2.4)
 
+## FastCGI server endpoint
 
-## fastcgi server endpoint
-
-These images are set up to work with a fastcgi server and will not start without one.  
-The fastcgi endpoint can be set via `APACHE_FCGI_HOST_PORT` environment variable (defaults to `cli:9000`).
-
+These images are set up to work with a FastCGI server and will not start without one.  
+The FastCGI endpoint can be set via `APACHE_FCGI_HOST_PORT` environment variable (defaults to `cli:9000`).
 
 ## HTTP Basic Authentication
 
