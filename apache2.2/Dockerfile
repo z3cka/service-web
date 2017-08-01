@@ -23,12 +23,9 @@ RUN set -x \
 	&& apk del $buildDeps
 
 # Generate a self-signed cert
-RUN set -x \
-	&& apk add --no-cache openssl \
-	&& openssl req -x509 -newkey rsa:4086 -days 3650 -nodes -sha256 \
-		-subj "/C=US/ST=WA/L=Issaquah/O=Atlas/OU=Docksal/CN=default" \
-		-keyout /usr/local/apache2/conf/server.key \
-		-out /usr/local/apache2/conf/server.crt \
+RUN apk add --no-cache openssl \
+	&& openssl req -batch -x509 -newkey rsa:4086 -days 3650 -nodes -sha256 \
+		-keyout /usr/local/apache2/conf/server.key -out /usr/local/apache2/conf/server.crt \
 	&& apk del openssl
 
 RUN set -x \
