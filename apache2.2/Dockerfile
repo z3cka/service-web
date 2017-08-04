@@ -34,6 +34,7 @@ RUN set -x \
 	&& sed -i '/^LoadModule proxy_module /a LoadModule proxy_fcgi_module modules/mod_proxy_fcgi.so' /usr/local/apache2/conf/httpd.conf \
 	&& sed -i '/^#.* proxy_connect_module /s/^#//' /usr/local/apache2/conf/httpd.conf \
 	&& sed -i '/^#.* ssl_module /s/^#//' /usr/local/apache2/conf/httpd.conf \
+	&& sed -i '/^#.* rewrite_module /s/^#//' /usr/local/apache2/conf/httpd.conf \
 	# Enable extra config files
 	&& sed -i '/^#.* conf\/extra\/httpd-vhosts.conf/s/^#//' /usr/local/apache2/conf/httpd.conf \
 	&& sed -i '/^#.* conf\/extra\/httpd-ssl.conf/s/^#//' /usr/local/apache2/conf/httpd.conf

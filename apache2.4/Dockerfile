@@ -13,6 +13,7 @@ RUN set -x \
 	&& sed -i '/^#.* proxy_connect_module /s/^#//' /usr/local/apache2/conf/httpd.conf \
 	&& sed -i '/^#.* ssl_module /s/^#//' /usr/local/apache2/conf/httpd.conf \
 	&& sed -i '/^#.* socache_shmcb_module /s/^#//' /usr/local/apache2/conf/httpd.conf \
+	&& sed -i '/^#.* rewrite_module /s/^#//' /usr/local/apache2/conf/httpd.conf \
 	# Enable extra config files
 	&& sed -i '/^#.* conf\/extra\/httpd-vhosts.conf/s/^#//' /usr/local/apache2/conf/httpd.conf \
 	&& sed -i '/^#.* conf\/extra\/httpd-ssl.conf/s/^#//' /usr/local/apache2/conf/httpd.conf
