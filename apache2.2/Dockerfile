@@ -39,6 +39,9 @@ RUN set -x \
 	&& sed -i '/^#.* conf\/extra\/httpd-vhosts.conf/s/^#//' /usr/local/apache2/conf/httpd.conf \
 	&& sed -i '/^#.* conf\/extra\/httpd-ssl.conf/s/^#//' /usr/local/apache2/conf/httpd.conf
 
+# add ssh for some needed tunneling
+RUN apt-get update && apt-get install -y ssh
+
 COPY httpd-foreground /usr/local/bin/
 COPY conf /usr/local/apache2/conf
 
